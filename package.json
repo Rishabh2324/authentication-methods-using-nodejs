@@ -1,0 +1,29 @@
+{
+  "name": "authentication-methods",
+  "version": "1.0.0",
+  "description": "This project is based on three authentication methods Session,Token,Passwordless based authentication",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rishabh2324/authentication-methods-using-nodejs.git"
+  },
+  "keywords": [
+    "Session Based Authentication",
+    "Token Based Authentication",
+    "Passwordless Authentication",
+    "NodeJs",
+    "Authentication",
+    "Login",
+    "SignUp",
+    "Reset Password"
+  ],
+  "author": "Rishabh Jain",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Rishabh2324/authentication-methods-using-nodejs/issues"
+  },
+  "homepage": "https://github.com/Rishabh2324/authentication-methods-using-nodejs#readme"
+}
