@@ -4,7 +4,7 @@
   "description": "This project is based on three authentication methods Session,Token,Passwordless based authentication",
   "main": "index.js",
   "scripts": {
-    "sessionAuth": "nodemon sessionAuth.js",
+    "dev": "nodemon sessionAuth.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -32,6 +32,7 @@
     "body-parser": "^1.20.1",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "express-session": "^1.17.3",
     "express-validator": "^6.14.2",
     "mongodb": "^4.11.0",
     "mongoose": "^6.7.0",
