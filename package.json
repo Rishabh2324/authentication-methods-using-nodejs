@@ -4,7 +4,7 @@
   "description": "This project is based on three authentication methods Session,Token,Passwordless based authentication",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon sessionAuth.js",
+    "sessionAuth": "nodemon sessionAuth.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
