@@ -111,11 +111,9 @@ app.post('/forgot', function (req, res) {
           const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-              email: EMAIL_ID,
+              user: EMAIL_ID,
               pass: EMAIL_PASSWORD,
             },
-            port: 465,
-            host: 'smtp.gmail.com',
           });
           const mailOptions = {
             from: EMAIL_ID,
@@ -153,9 +151,9 @@ app.post('/forgot', function (req, res) {
 
 app.post('/resetpassword', function (req, res) {
   let { passResetKey, newPassword } = req.body;
-  User.find({ passResetKey: passResetKey }, function (err, result) {
+  User.findOne({ passResetKey: passResetKey }, function (err, result) {
     if (result) {
-      const currentTime = new Date().now();
+      const currentTime = new Date().getTime();
       const passKeyExpire = result.passKeyExpire;
       if (passKeyExpire > currentTime) {
         result.password = bcrypt.hashSync(newPassword, 5);
