@@ -7,4 +7,5 @@ module.exports = {
   EMAIL_ID: process.env.EMAIL_ID,
   EMAIL_PASSWORD: process.env.EMAIL_PASSWORD,
   SESSION_SECRET: process.env.SESSION_SECRET,
+  TOKEN_SECRET: process.env.TOKEN_SECRET,
 };
