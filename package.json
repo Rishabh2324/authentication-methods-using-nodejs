@@ -6,6 +6,7 @@
   "scripts": {
     "sessionAuth": "nodemon sessionAuth.js",
     "tokenAuth": "nodemon tokenAuth.js",
+    "passwordLessAuth": "nodemon passwordLessAuth.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -31,6 +32,8 @@
   "dependencies": {
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.1",
+    "cookie-parser": "^1.4.6",
+    "crypto": "^1.0.1",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
@@ -40,6 +43,7 @@
     "mongoose": "^6.7.0",
     "nodemailer": "^6.8.0",
     "nodemon": "^2.0.20",
-    "shortid": "^2.2.16"
+    "shortid": "^2.2.16",
+    "twilio": "^3.83.1"
   }
 }
