@@ -13,6 +13,8 @@ const {
   TWILIO_AUTH_TOKEN,
   TWILIO_PHONE_NUMBER,
   SMS_KEY,
+  EMAIL_ID,
+  EMAIL_PASSWORD,
 } = require('./config');
 
 //Loading app
@@ -46,7 +48,7 @@ app.post('/sendOTP', function (req, res) {
   // Time limit of one day
   const oneTimeCodeTimeLimit = new Date().getTime() + 8640000;
 
-  // User will have otp on email or on phone
+  // User will have otp on email or on phone number .. adding email functionality so that is twilio free trial expires user can have email suport to det otp's
   const userIdentity = email || phoneNumber;
 
   // Generate Data
@@ -65,6 +67,7 @@ app.post('/sendOTP', function (req, res) {
       })
       .then(function (result) {
         console.log(result);
+        res.status(200).json({ userIdentity, hash: hashWithOtcTimeLimit });
       })
       .catch(function (error) {
         console.log(JSON.stringify(error), null, 2);
@@ -92,15 +95,13 @@ app.post('/sendOTP', function (req, res) {
       .sendMail(mailOptions)
       .then(function (response) {
         console.log('Email send:\n', response);
-        res.status(200).send('OTP code sent');
+        res.status(200).json({ userIdentity, hash: hashWithOtcTimeLimit });
       })
       .catch(function (err) {
         console.log(JSON.stringify(err, null, 2));
         res.status(500).send('Could not send OTP');
       });
   }
-
-  res.status(200).json({ userIdentity, hash: hashWithOtcTimeLimit });
 });
 
 app.post('/verifyOTP', function (req, res) {
@@ -121,12 +122,10 @@ app.post('/verifyOTP', function (req, res) {
     const data = `${userIdentity}.${oneTimeCode}.${oneTimeCodeTimeLimit}`;
 
     //Again generate Hash
-    const hash = crypto
+    const newHash = crypto
       .createHmac('sha256', SMS_KEY)
       .update(data)
       .digest('hex');
-    const newHash = `${hash}.${oneTimeCodeTimeLimit}`;
-
     if (newHash === oldHash) {
       const accessToken = jwt.sign({ data: userIdentity }, JWT_AUTH_TOKEN, {
         expiresIn: '30s',
@@ -169,18 +168,18 @@ Authorization middleware
 */
 
 app.use(function (req, res, next) {
-  const { accessToken } = req.body;
+  const accessToken = req.cookies.accessToken;
   jwt.verify(accessToken, JWT_AUTH_TOKEN, function (err, verifiedJwt) {
-    if (err) {
-      return res.status(403).send({ err, msg: 'User not authenticated' });
+    if (verifiedJwt) {
+      res.verifiedJwt = verifiedJwt;
+      next();
     } else if (err.message === 'TokenExpiredError') {
       return res.status(403).json({
         success: false,
         message: 'Access token exprired',
       });
     } else {
-      res.verifiedJwt = verifiedJwt;
-      next();
+      return res.status(403).send({ err, msg: 'User not authenticated' });
     }
   });
 });
@@ -190,7 +189,7 @@ app.get('/protectedRoute', function (req, res) {
 });
 
 app.post('/refresh', function (req, res) {
-  const { refreshToken } = req.cookies;
+  const refreshToken = req.cookies.refreshToken;
   if (!refreshToken)
     return res
       .status(403)
@@ -200,14 +199,8 @@ app.post('/refresh', function (req, res) {
       .status(403)
       .send({ message: 'Refresh token blocked, login again' });
   jwt.verify(refreshToken, JWT_REFRESH_TOKEN, function (err, verifiedJwt) {
-    if (err) {
-      return res.status(403).send({ err, msg: 'Invalid refresh token' });
-    } else if (err.message === 'TokenExpiredError') {
-      return res.status(403).json({
-        success: false,
-        message: 'Access token exprired',
-      });
-    } else {
+    console.log(err, verifiedJwt);
+    if (verifiedJwt) {
       const accessToken = jwt.sign({ data: verifiedJwt }, JWT_AUTH_TOKEN, {
         expiresIn: '30s',
       });
@@ -223,6 +216,13 @@ app.post('/refresh', function (req, res) {
           sameSite: 'strict',
         })
         .send({ previousSessionExpired: true, success: true });
+    } else if (err.message === 'TokenExpiredError') {
+      return res.status(403).json({
+        success: false,
+        message: 'Access token exprired',
+      });
+    } else {
+      return res.status(403).send({ err, msg: 'Invalid refresh token' });
     }
   });
 });
